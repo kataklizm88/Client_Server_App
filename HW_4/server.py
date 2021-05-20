@@ -1,7 +1,11 @@
 from socket import *
-import json
 import argparse
 import pickle
+import logging
+from log import server_log_config
+
+
+logger = logging.getLogger('server')
 
 
 def create_parser():
@@ -11,19 +15,27 @@ def create_parser():
     return parser
 
 
-def get_message(data=None):
+def get_message(data=None):     # Функция переписана под логгирование try except
     if data is not None:
-        data = pickle.loads(data)
-        return data
+        try:
+            data = pickle.loads(data)
+            name = data['user']['account_name']
+        except Exception as er:
+            logger.info(f'Ошибка - {er}')
+        else:
+            logger.info('Получено сообщение от пользователя %s', name)
+        finally:
+            return data
     else:
         return "Ничего"
 
 
-def prepare_response(data=get_message()):  # Версия для теста
+def prepare_response(data=get_message()):
     if data == 'Ничего':
         return "Нет запроса от клиента"
     else:
         if data['action'] == 'presence':
+            logger.info('Ответ для пользователя подготовлен')
             return 200
 
 
@@ -32,6 +44,7 @@ def send_response(data=prepare_response()):
                 'response': data,
                 'alert': 'Вы на сервере'
             }
+    logger.info('Вы на сервере')
     return pickle.dumps(response)
 
 
@@ -44,7 +57,7 @@ if __name__ == "__main__":
     while True:
         client, addr = s.accept()
         message = client.recv(1000000)
-        get_message(message)
+        x = get_message(message)
+        prepare_response(x)
         client.send(send_response())
         client.close()
-
