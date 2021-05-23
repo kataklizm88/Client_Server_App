@@ -1,8 +1,12 @@
 from socket import *
-import json
 import time
 import argparse
 import pickle
+import logging
+from log import client_log_config
+
+
+logger = logging.getLogger('client')
 
 
 def create_parser():
@@ -22,16 +26,19 @@ def make_presence(action='presence', name='User'):
                 "status":      "Yep, I am here!"
                 }
         }
+    logger.info('Сообщение для сервера составлено')
     return presence
 
 
 def send_presence(data = make_presence()):
     data = pickle.dumps(data)
+    logger.info('Выполнена его кодировка')
     return data
 
 def get_response(data = None):
     data = pickle.loads(data)
     res = data['alert']
+    logger.info('Сообщение  от сервера получено')
     return res
 
 if __name__ == "__main__":
