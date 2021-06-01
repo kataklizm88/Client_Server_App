@@ -98,7 +98,6 @@ def main():
         w.send(get_data(s))
 
 
-
 if __name__ == "__main__":
     try:
         main()

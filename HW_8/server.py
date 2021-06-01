@@ -29,6 +29,7 @@ def read_requests(r_clients, all_clients):
 
     return responses
 
+
 def write_responses(requests, w_clients, all_clients):
     for sock in w_clients:
         if sock in requests:
@@ -80,7 +81,6 @@ def write_responses(requests, w_clients, all_clients):
                     print('Клиент  {} {} отключился'.format(sock.fileno(), sock.getpeername()))
                     sock.close()
                     all_clients.remove(sock)
-
 
 
 def main():
