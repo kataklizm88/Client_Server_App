@@ -9,6 +9,7 @@ from log import server_log_config
 logger = logging.getLogger('server')
 group = {'1111': []}            # Группа 1111 для примера
 
+
 def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('addr', nargs='?', default='localhost')

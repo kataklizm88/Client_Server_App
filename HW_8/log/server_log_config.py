@@ -13,7 +13,6 @@ tr.setFormatter(formatter)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(tr)
 
-
 if __name__ == '__main__':
     console = logging.StreamHandler()
     console.setLevel(logging.DEBUG)

@@ -6,9 +6,6 @@ from threading import Thread
 from log import client_log_config
 import logging
 
-"""  Второй вариант - попытка сделать с 2-мя потоками
-    В итоге второй поток вмешивается в середины первого.
-"""
 
 logger = logging.getLogger('client')
 
