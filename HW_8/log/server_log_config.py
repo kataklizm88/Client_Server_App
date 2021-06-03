@@ -7,11 +7,9 @@ formatter = logging.Formatter("%(asctime)s - %(levelname)s -  %(module)s - %(mes
 fht = logging.FileHandler("server.log")
 fht.setLevel(logging.DEBUG)
 fht.setFormatter(formatter)
-
 tr = logging.handlers.TimedRotatingFileHandler('server.log', interval=1, when='D')
 tr.setLevel(logging.DEBUG)
 tr.setFormatter(formatter)
-
 logger.setLevel(logging.DEBUG)
 logger.addHandler(tr)
 

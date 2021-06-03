@@ -9,7 +9,6 @@ fh.setFormatter(formatter)
 logger.addHandler(fh)
 logger.setLevel(logging.DEBUG)
 
-
 if __name__ == '__main__':
     console = logging.StreamHandler()
     console.setLevel(logging.DEBUG)

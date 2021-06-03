@@ -37,7 +37,7 @@ def write_responses(requests, w_clients, all_clients):
                 try:
                     m = requests[sock]['message']
                     n = requests[sock]['user']
-                    resp = f'Сообщение от {n}: {m}'
+                    resp = f'Новое Сообщение от {n}: {m}'
                     resp = pickle.dumps(resp)
                     for i in all_clients:
                         i.send(resp)
@@ -70,12 +70,10 @@ def write_responses(requests, w_clients, all_clients):
                         gr_numb = requests[sock]['group']
                         group_members = group[gr_numb]
                         group_members.append(sock)
-                        print(group)
                         sock.send(pickle.dumps(f'Вы вступили в группу {gr_numb}'))
                     else:                                           # Если группы нет - создаем
                         gr_numb = requests[sock]['group']
                         group[gr_numb] = sock
-                        print(group)
                         sock.send(pickle.dumps(f'Вы первые в группе {gr_numb}'))
                 except:
                     print('Клиент  {} {} отключился'.format(sock.fileno(), sock.getpeername()))

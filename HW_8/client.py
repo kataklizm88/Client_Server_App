@@ -2,37 +2,15 @@ import time
 from socket import *
 import argparse
 import pickle
-import logging
-from log import client_log_config
 from threading import Thread
-from queue import Queue
+from log import client_log_config
+import logging
 
-""" Первый вариант: попытка сделать с очередью
-    Прилетает только одно сообщение, если сообщений было несколько - второе выйдет только после следующего input.
+"""  Второй вариант - попытка сделать с 2-мя потоками
+    В итоге второй поток вмешивается в середины первого.
 """
+
 logger = logging.getLogger('client')
-
-class WorkerThread(Thread):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.input_queue = Queue()
-
-    def send(self, item):
-        self.input_queue.put(item)
-
-    def close(self):
-        self.input_queue.put(None)
-        self.input_queue.join()
-
-    def run(self):
-        while True:
-            item = self.input_queue.get()
-            if item is None:
-                break
-            print(item)
-            self.input_queue.task_done()
-        self.input_queue.task_done()
-
 
 def create_parser():
     parser = argparse.ArgumentParser()
@@ -68,8 +46,9 @@ def send_data(s, data):
 
 
 def get_data(s):
-    logger.info('Получено сообщение от сервера')
-    return (pickle.loads(s.recv(1024)))
+    while True:
+        logger.info('Получено сообщение от сервера')
+        print(pickle.loads(s.recv(1024)))
 
 
 def main():
@@ -78,7 +57,7 @@ def main():
         "action": 'action',
         "time": time.ctime(time.time()),
         "type": "status",
-        "user": 'vlad',
+        "user": 'john',
         'group': None,
         'message': None
     }
@@ -87,19 +66,20 @@ def main():
     namespace = parser.parse_args()
     s = socket(AF_INET, SOCK_STREAM)
     s.connect((namespace.addr, namespace.port))
-    w = WorkerThread()
-    w.start()
+    th = Thread(target=get_data, args=(s,))
+    th.daemon = True
+    th.start()
     while True:
         print("Выберите что хотите сделать:"
-            " M - отправить сообщение всем пользователям;"
-            " G - отправить сообщение группе; EG - вступить в группу")
+              " M - отправить сообщение всем пользователям;"
+              " G - отправить сообщение группе; EG - вступить в группу")
         choise = true_choise(true_answer, presence)
         send_data(s, choise)
-        w.send(get_data(s))
+
 
 
 if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        logger.error('Ошибка: ', e)
+        print('Ошибка: ', e)
